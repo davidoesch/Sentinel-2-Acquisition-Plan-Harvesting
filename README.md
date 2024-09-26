@@ -1,12 +1,12 @@
 # Sentinel-2 Acquisition Plan Harvesting and Extraction
 
-This project is a toolset for harvesting and processing Sentinel-2 acquisition plans, extracting relevant Area of Interest (AOI) polygons, and merging the data into CSV files. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available)
+This project is a toolset for harvesting and processing ESA Sentinel-2 acquisition plans, extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available.
 
 ## Features
 
 - **Harvest Sentinel-2 Acquisition Plans**: Automatically download and process Sentinel-2 acquisition plan files from the Sentinel ESA website.
-- **AOI-Based Extraction**: Extract polygons within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files).
-- **CSV Merging**: Merge multiple acquisition plan CSV files, filter out dates older than today, and automatically calculate publish dates (assuming a 3 day delay of https://github.com/swisstopo/topo-satromo/).
+- **AOI-Based Extraction**: Extract metdata within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files).
+- **CSV Export**: Merge S2A and S2B  acquisition plans into one CSV file, filter out dates older than today, and automatically calculate publish dates (assuming a 3 day delay of https://github.com/swisstopo/topo-satromo/).
 
 ## Getting Started
 
