@@ -5,25 +5,25 @@
 This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available.
 
 ## Acquisition Plan Sentinel-2 Switzerland
-| Acquisition Date   | Publish Date   |   Orbit | Platform   |
-|:-------------------|:---------------|--------:|:-----------|
-| 2024-09-27         | 2024-09-30     |      65 | S2A        |
-| 2024-09-28         | 2024-10-01     |       8 | S2B        |
-| 2024-09-29         | 2024-10-02     |      22 | S2B        |
-| 2024-09-30         | 2024-10-03     |     108 | S2A        |
-| 2024-10-02         | 2024-10-05     |      65 | S2B        |
-| 2024-10-03         | 2024-10-06     |       8 | S2A        |
-| 2024-10-04         | 2024-10-07     |      22 | S2A        |
-| 2024-10-05         | 2024-10-08     |     108 | S2B        |
-| 2024-10-07         | 2024-10-10     |      65 | S2A        |
-| 2024-10-08         | 2024-10-11     |       8 | S2B        |
-| 2024-10-09         | 2024-10-12     |      22 | S2B        |
-| 2024-10-12         | 2024-10-15     |      65 | S2B        |
+| Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
+|:-------------------|:---------------|--------:|:-----------|:----------------------------|
+| 2024-09-27         | 2024-09-30     |      65 | S2A        | ![Coverage](assets/65.png)  |
+| 2024-09-28         | 2024-10-01     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2024-09-29         | 2024-10-02     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2024-09-30         | 2024-10-03     |     108 | S2A        | ![Coverage](assets/108.png) |
+| 2024-10-02         | 2024-10-05     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2024-10-03         | 2024-10-06     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2024-10-04         | 2024-10-07     |      22 | S2A        | ![Coverage](assets/22.png)  |
+| 2024-10-05         | 2024-10-08     |     108 | S2B        | ![Coverage](assets/108.png) |
+| 2024-10-07         | 2024-10-10     |      65 | S2A        | ![Coverage](assets/65.png)  |
+| 2024-10-08         | 2024-10-11     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2024-10-09         | 2024-10-12     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2024-10-12         | 2024-10-15     |      65 | S2B        | ![Coverage](assets/65.png)  |
 
 ## Features
 
 - **Harvest Sentinel-2 Acquisition Plans**: Automatically download and process Sentinel-2 acquisition plan files from the Sentinel ESA website.
-- **AOI-Based Extraction**: Extract metdata within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files). (default: Switzerland)
+- **AOI-Based Extraction**: Extract metadata within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files). (default: Switzerland)
 - **CSV Export**: Merge S2A and S2B  acquisition plans into one CSV file, filter out dates older than today, and automatically calculate publish dates (assuming a 3 day delay of https://github.com/swisstopo/topo-satromo/).
 
 ## Getting Started

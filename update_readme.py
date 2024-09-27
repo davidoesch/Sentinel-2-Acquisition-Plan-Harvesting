@@ -4,7 +4,11 @@ import pandas as pd
 # Read the CSV file
 df = pd.read_csv('acquisitionplan.csv')
 
-# Convert the DataFrame to Markdown format
+# Assuming 'orbit' is a column in the CSV
+# Create a new column 'Coverage' with image links
+df['Coverage'] = df['Orbit'].apply(lambda x: f'![Coverage](assets/{x}.png)')
+
+# Convert the DataFrame to Markdown format, including the new 'Coverage' column
 markdown_table = df.to_markdown(index=False)
 
 # Read the existing README.md content
@@ -15,7 +19,11 @@ with open('README.md', 'r') as readme_file:
 table_pattern = r'## Acquisition Plan Sentinel-2 Switzerland\n(.|\n)*?\n\n'
 
 # Replace the existing table with the new markdown table
-new_readme_content = re.sub(table_pattern, f'## Acquisition Plan Sentinel-2 Switzerland\n{markdown_table}\n\n', readme_content)
+new_readme_content = re.sub(
+    table_pattern,
+    f'## Acquisition Plan Sentinel-2 Switzerland\n{markdown_table}\n\n',
+    readme_content
+)
 
 # Write the updated content back to README.md
 with open('README.md', 'w') as readme_file:
