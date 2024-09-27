@@ -27,7 +27,7 @@ pip install lxml pandas shapely
 ### Installation
 1. Clone the repository to your local machine:
 
-```bash
+```
 git clone https://github.com/yourusername/sentinel2-acquisition-harvester.git
 cd sentinel2-acquisition-harvester
 ```
@@ -41,7 +41,7 @@ Define the AOI by changing the 'POLYGON_WKT' in 'get_acquisition.py' to your nee
 
 ### 2. Running the Acquisition Harvesting Script
 The 'get_acquisition.py' script downloads the latest acquisition plan files from the Sentinel ESA website and processes the Area of Interest (AOI) defined in the script.
-```bash
+```
 python get_acquisition.py
 ```
 This script will:
