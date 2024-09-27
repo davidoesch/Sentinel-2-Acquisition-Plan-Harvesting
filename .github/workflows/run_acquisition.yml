@@ -50,9 +50,9 @@ jobs:
       uses: github-actions-x/commit@v2.9
       with:
         push-branch: 'main'
-        commit-message: 'acquisitionplan.csv push done'
+        commit-message: 'README.md push done'
         force-add: 'true'
-        files: acquisitionplan.csv
+        files: README.md
         name: autoupdate
     
         
