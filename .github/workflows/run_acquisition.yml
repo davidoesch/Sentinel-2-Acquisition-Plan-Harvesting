@@ -31,7 +31,7 @@ jobs:
     
     - name: Run Python script
       run: |
-        python get_acquisition.py
+        python get_acquisition_plans.py
       
     - name: Push log files to repo
       uses: github-actions-x/commit@v2.9
