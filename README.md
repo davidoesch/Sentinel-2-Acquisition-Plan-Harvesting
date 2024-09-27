@@ -1,4 +1,4 @@
-[![Run acquisition](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml/badge.svg?event=workflow_run)](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml)
+[![Run acquisition](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml/badge.svg)](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml)[![GitHub commit](https://img.shields.io/github/last-commit/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting)](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/commits/main)
 
 # Sentinel-2 Acquisition Plan Harvesting and Extraction
 
@@ -7,7 +7,7 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   |
 |:-------------------|:---------------|--------:|:-----------|
-| 2024-09-27         | 2024-09-30     |      65 | S2A        |
+| 1999-09-27         | 2024-09-30     |      65 | S2A        |
 | 2024-09-28         | 2024-10-01     |       8 | S2B        |
 | 2024-09-29         | 2024-10-02     |      22 | S2B        |
 | 2024-09-30         | 2024-10-03     |     108 | S2A        |
