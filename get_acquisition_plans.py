@@ -11,31 +11,31 @@ Author: David Oesch
 Date: 2024-09-26
 """
 
-import urllib.request as ul
-import lxml.etree as ET
-from lxml import html
 import datetime
-import pandas as pd # type: ignore
-from datetime import timedelta
 import os
-from extract_acquisition_plans_s2 import extract_S2_entries  # in-house developed method
+import urllib.request as ul
+from datetime import timedelta
+import pandas as pd  # type: ignore
+from lxml import html
+
+from extract_acquisition_plans_s2 import \
+    extract_S2_entries  # in-house developed method
+
 
 def merge_aoi_files(directory, output_file):
     """
-    Merges all CSV files ending with '_AOI.csv' from the specified directory, filtering out entries 
+    Merges all CSV files ending with '_AOI.csv' from the specified directory, filtering out entries
     with an Acquisition Date older than today.
 
     Args:
         directory (str): The directory where the _AOI.csv files are stored.
         output_file (str): The path to the output CSV file.
-    
+
     Returns:
         bool: True if the merge was successful, False if no files were processed.
     """
-    
     # List to store all data from CSVs
     merged_data = []
-    
     # Get today's date
     today = datetime.datetime.now().date()
 
@@ -50,7 +50,6 @@ def merge_aoi_files(directory, output_file):
 
             # Extract Acquisition Date from the ObservationTimeStart column
             df['Acquisition Date'] = pd.to_datetime(df['ObservationTimeStart']).dt.date
-            
             # Filter out rows where Acquisition Date is older than today
             df = df[df['Acquisition Date'] >= today]
 
@@ -98,11 +97,11 @@ def download_and_extract_kml(satellite, file_url, output_filename, output_path, 
         bool: True if extraction succeeds, False otherwise.
     """
     kml_file_path = os.path.join(output_path, output_filename + '.kml')
-    
+
     # Download the .kml file
     ul.urlretrieve(file_url, filename=kml_file_path)
     print(f"Successfully downloaded {file_url}")
-    
+
     if extract_area and satellite == "Sentinel-2":
         # Extract AOI from the .kml file using in-house method
         entries = extract_S2_entries(file_url.split('/')[-1][:3].upper(), kml_file_path, output_filename + '_AOI.csv', output_path, POLYGON_WKT)
@@ -178,11 +177,11 @@ liElementsS2A = []
 liElementsS2B = []
 for tree in [s2_tree]:
     bodyElement = tree.findall('./')[1]
-    
+
     for div in bodyElement.find(".//div[@class='sentinel-2a']"):
         for li in div.findall('.//li'):
             liElementsS2A.append(li)
-    
+
     for div in bodyElement.find(".//div[@class='sentinel-2b']"):
         for li in div.findall('.//li'):
             liElementsS2B.append(li)
@@ -196,15 +195,15 @@ s2a_key = get_latest_kml(kml_dict_s2a)
 s2b_key = get_latest_kml(kml_dict_s2b)
 
 # Download and process the .kml files for Sentinel-2A and Sentinel-2B
-s2a_ok = download_and_extract_kml('Sentinel-2', kml_dict_s2a[s2a_key], 'S2A_acquisition_plan', STORAGE_PATH, extract_area=True) if s2a_key else False
-s2b_ok = download_and_extract_kml('Sentinel-2', kml_dict_s2b[s2b_key], 'S2B_acquisition_plan', STORAGE_PATH, extract_area=True) if s2b_key else False
+S2A_OK = download_and_extract_kml('Sentinel-2', kml_dict_s2a[s2a_key], 'S2A_acquisition_plan', STORAGE_PATH, extract_area=True) if s2a_key else False
+S2B_OK = download_and_extract_kml('Sentinel-2', kml_dict_s2b[s2b_key], 'S2B_acquisition_plan', STORAGE_PATH, extract_area=True) if s2b_key else False
 
 # Merge the two files, add publish date and remove dates older than today
-merge_ok = merge_aoi_files(STORAGE_PATH,'acquisitionplan.csv')
+MERGE_OK = merge_aoi_files(STORAGE_PATH,'acquisitionplan.csv')
 
 
 # Report success or failure
-if not (s2a_ok and s2b_ok and merge_ok ):
+if not (S2A_OK and S2B_OK and MERGE_OK ):
     print("\nFailed to download and extract all Sentinel-2 data.")
 else:
     print("\nAll Sentinel-2 downloads and operations completed successfully.")

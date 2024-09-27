@@ -1,6 +1,24 @@
+[![Run acquisition](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml/badge.svg?event=workflow_run)](https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/actions/workflows/run_acquisition.yml)
+
 # Sentinel-2 Acquisition Plan Harvesting and Extraction
 
 This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available.
+
+## Acquisition Plan Sentinel-2 Switzerland
+| Acquisition Date   | Publish Date   |   Orbit | Platform   |
+|:-------------------|:---------------|--------:|:-----------|
+| 2024-09-27         | 2024-09-30     |      65 | S2A        |
+| 2024-09-28         | 2024-10-01     |       8 | S2B        |
+| 2024-09-29         | 2024-10-02     |      22 | S2B        |
+| 2024-09-30         | 2024-10-03     |     108 | S2A        |
+| 2024-10-02         | 2024-10-05     |      65 | S2B        |
+| 2024-10-03         | 2024-10-06     |       8 | S2A        |
+| 2024-10-04         | 2024-10-07     |      22 | S2A        |
+| 2024-10-05         | 2024-10-08     |     108 | S2B        |
+| 2024-10-07         | 2024-10-10     |      65 | S2A        |
+| 2024-10-08         | 2024-10-11     |       8 | S2B        |
+| 2024-10-09         | 2024-10-12     |      22 | S2B        |
+| 2024-10-12         | 2024-10-15     |      65 | S2B        |
 
 ## Features
 
