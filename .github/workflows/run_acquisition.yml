@@ -32,8 +32,21 @@ jobs:
     - name: Run Python script
       run: |
         python get_acquisition_plans.py
+
+    - name: Run Python script
+      run: |
+        python update_readme.py
       
-    - name: Push log files to repo
+    - name: Push acquisitionplan.csv file to repo
+      uses: github-actions-x/commit@v2.9
+      with:
+        push-branch: 'main'
+        commit-message: 'acquisitionplan.csv push done'
+        force-add: 'true'
+        files: acquisitionplan.csv
+        name: autoupdate
+
+    - name: Push readme file to repo
       uses: github-actions-x/commit@v2.9
       with:
         push-branch: 'main'
