@@ -5,7 +5,7 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Features
 
 - **Harvest Sentinel-2 Acquisition Plans**: Automatically download and process Sentinel-2 acquisition plan files from the Sentinel ESA website.
-- **AOI-Based Extraction**: Extract metdata within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files).
+- **AOI-Based Extraction**: Extract metdata within a defined Area of Interest (AOI) from Sentinel-2 acquisition plans (.kml files). (default: Switzerland)
 - **CSV Export**: Merge S2A and S2B  acquisition plans into one CSV file, filter out dates older than today, and automatically calculate publish dates (assuming a 3 day delay of https://github.com/swisstopo/topo-satromo/).
 
 ## Getting Started
@@ -14,7 +14,7 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 
 Make sure you have the following installed:
 
-- Python 3.10+
+- Python 3.9+
 - `lxml` library
 - `pandas` library
 - `shapely` library
@@ -22,7 +22,7 @@ Make sure you have the following installed:
 Install the required dependencies using `pip`:
 
 ```
-pip install lxml pandas shapely
+pip install -r requirements.txt
 ```
 ### Installation
 1. Clone the repository to your local machine:
@@ -37,7 +37,7 @@ cd sentinel2-acquisition-harvester
 
 ## Usage
 ### 1. Define the AOI
-Define the AOI by changing the 'POLYGON_WKT' in 'get_acquisition.py' to your needs
+Define the AOI by changing the 'POLYGON_WKT' in 'get_acquisition.py' to your needs (Default is Switzerland)
 
 ### 2. Running the Acquisition Harvesting Script
 The 'get_acquisition.py' script downloads the latest acquisition plan files from the Sentinel ESA website and processes the Area of Interest (AOI) defined in the script.

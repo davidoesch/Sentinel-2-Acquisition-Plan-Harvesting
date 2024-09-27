@@ -20,11 +20,6 @@ from datetime import timedelta
 import os
 from extract_acquisition_plans_s2 import extract_S2_entries  # in-house developed method
 
-# Polygon defining the Area of Interest (AOI)
-POLYGON_WKT = "POLYGON((5.96 46.13,6.03 46.66,6.91 47.52,8.56 47.90,9.78 47.65,9.91 47.17,10.70 46.96,10.60 46.47,10.08 46.11,9.06 45.74,7.13 45.77,5.96 46.13))"
-
-
-
 def merge_aoi_files(directory, output_file):
     """
     Merges all CSV files ending with '_AOI.csv' from the specified directory, filtering out entries 
@@ -171,6 +166,10 @@ def get_latest_kml(kml_dict):
 S2_URL = 'https://sentinel.esa.int/web/sentinel/missions/sentinel-2/acquisition-plans'
 URL_KML_PREFIX = 'https://sentinel.esa.int'
 STORAGE_PATH = os.getcwd() + '/'
+
+# Polygon defining the Area of Interest (AOI)
+POLYGON_WKT = "POLYGON((5.96 46.13,6.03 46.66,6.91 47.52,8.56 47.90,9.78 47.65,9.91 47.17,10.70 46.96,10.60 46.47,10.08 46.11,9.06 45.74,7.13 45.77,5.96 46.13))"# This is Switzerland
+
 
 # Fetch and parse the Sentinel-2 acquisition plans page
 s2_tree = html.parse(ul.urlopen(S2_URL))
