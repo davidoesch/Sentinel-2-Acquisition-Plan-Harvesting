@@ -50,8 +50,8 @@ def merge_aoi_files(directory, output_file):
 
             # Extract Acquisition Date from the ObservationTimeStart column
             df['Acquisition Date'] = pd.to_datetime(df['ObservationTimeStart']).dt.date
-            # Filter out rows where Acquisition Date is older than today
-            df = df[df['Acquisition Date'] >= today]
+            # Filter out rows where Acquisition Date is older than today minus 2 days
+            df = df[df['Acquisition Date'] >= today - timedelta(days=2)]
 
             # If there are valid rows after filtering
             if not df.empty:
