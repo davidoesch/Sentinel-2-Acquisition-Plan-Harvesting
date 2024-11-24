@@ -2,7 +2,7 @@
 
 # Sentinel-2 Acquisition Plan Harvesting and Extraction
 
-This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available.
+This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available see [Example of HISTORIC and FUTURE S2 data](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html).
 
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
