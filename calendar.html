@@ -158,7 +158,14 @@
             acquisitionPlanIMG: "https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/raw/main/assets/",
 
             // API and Data URLs
+            // OPTION VHI
+            //collectionBaseURL: "ch.swisstopo.swisseo_vhi_v100",
+            //itemBaseURL: "swisseo_vhi_v100",
+
+            // OPTION S2 SR
             collectionBaseURL: "ch.swisstopo.swisseo_s2-sr_v100",
+            itemBaseURL: "swisseo_s2-sr_v100",
+            productNAME: "S2_SR_HARMONIZED_SWISS",
             stacApiBaseUrl: "https://data.geo.admin.ch/api/stac/v0.9/collections/",
             mapGeoAdminUrl: "https://map.geo.admin.ch/index.html",
             dataGeoAdminUrl: "https://data.geo.admin.ch/",
@@ -205,7 +212,7 @@
                         const dateOnly = dateTime.split('T')[0];
                         let timeOnly = dateTime.split('T')[1].split('.')[0].replace(/:/g, '');
                         timeOnly = timeOnly.endsWith('Z') ? timeOnly.slice(0, -1) : timeOnly;
-                        const viewLink = `${CONFIG.mapGeoAdminUrl}?layers=WMS||swisseo_s2-sr_v100_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${CONFIG.collectionBaseURL}`;
+                        const viewLink = `${CONFIG.mapGeoAdminUrl}?layers=WMS||${CONFIG.itemBaseURL}}_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${CONFIG.collectionBaseURL}`;
                         const image = `${CONFIG.dataGeoAdminUrl}${CONFIG.collectionBaseURL}/${dateOnly}t${timeOnly}/thumbnail.jpg`;
                         const formattedUrl = `${CONFIG.dataGeoAdminUrl}browser/index.html#/collections/${CONFIG.collectionBaseURL}/items/${dateOnly}t${timeOnly}?&asset=asset-thumbnail.jpg`;
                         return { date: dateOnly, link: formattedUrl, downloadLink: formattedUrl, viewLink, image };
@@ -233,7 +240,7 @@
 
                             const csvData = await fetchCSVData();
                             csvData
-                                .filter(entry => entry.collection.trim() === 'S2_SR_HARMONIZED_SWISS')
+                                .filter(entry => entry.collection.trim() === CONFIG.productNAME)
                                 .forEach(entry => {
                                     if (!stacDates.has(entry.date)) {
                                         let eventTitle = entry.remark;
