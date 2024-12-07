@@ -142,21 +142,42 @@
 </head>
 
 <body>
-
     <div class="calendar-container">
         <div class="calendar-section">
-
             <div id="calendarS2"></div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const collectionBaseURL = "ch.swisstopo.swisseo_s2-sr_v100";
+        // Configuration Section
+        const CONFIG = {
 
+            // Data URLs
+            emptyAssetsCSV: "https://raw.githubusercontent.com/swisstopo/topo-satromo/refs/heads/main/tools/step0_empty_assets.csv",
+            acquisitionPlanCSV: "https://raw.githubusercontent.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/refs/heads/main/acquisitionplan.csv",
+            acquisitionPlanIMG: "https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/raw/main/assets/",
+
+            // API and Data URLs
+            collectionBaseURL: "ch.swisstopo.swisseo_s2-sr_v100",
+            stacApiBaseUrl: "https://data.geo.admin.ch/api/stac/v0.9/collections/",
+            mapGeoAdminUrl: "https://map.geo.admin.ch/index.html",
+            dataGeoAdminUrl: "https://data.geo.admin.ch/",
+
+            // Language and Localization
+            locale: "de",
+            buttonText: {
+                today: "Heute"
+            },
+            buttonHints: {
+                today: "Diesen Monat",
+                prev: "Vorheriger Monat",
+                next: "Nächster Monat"
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
             const fetchCSVData = async () => {
-                const response = await fetch('https://raw.githubusercontent.com/swisstopo/topo-satromo/refs/heads/main/tools/step0_empty_assets.csv');
+                const response = await fetch(CONFIG.emptyAssetsCSV);
                 const text = await response.text();
                 return text.trim().split('\n').slice(1).map(row => {
                     const [collection, date, remark] = row.split(',');
@@ -165,7 +186,7 @@
             };
 
             const fetchCSVForecast = async () => {
-                const response = await fetch('https://raw.githubusercontent.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/refs/heads/main/acquisitionplan.csv');
+                const response = await fetch(CONFIG.acquisitionPlanCSV);
                 const text = await response.text();
                 return text.trim().split('\n').slice(1).map(row => {
                     const [acquisitionDate, publishDate, orbit, platform] = row.split(',');
@@ -174,7 +195,7 @@
             };
 
             const fetchStacData = async (startDate, endDate) => {
-                const baseUrl = `https://data.geo.admin.ch/api/stac/v0.9/collections/${collectionBaseURL}/items`;
+                const baseUrl = `${CONFIG.stacApiBaseUrl}${CONFIG.collectionBaseURL}/items`;
                 const response = await fetch(`${baseUrl}?datetime=${startDate}/${endDate}`);
                 const data = await response.json();
                 return data.features
@@ -184,11 +205,9 @@
                         const dateOnly = dateTime.split('T')[0];
                         let timeOnly = dateTime.split('T')[1].split('.')[0].replace(/:/g, '');
                         timeOnly = timeOnly.endsWith('Z') ? timeOnly.slice(0, -1) : timeOnly;
-
-                        const viewLink = `https://map.geo.admin.ch/index.html?layers=WMS||swisseo_s2-sr_v100_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${collectionBaseURL}`;
-                        const image = `https://data.geo.admin.ch/${collectionBaseURL}/${dateOnly}t${timeOnly}/thumbnail.jpg`;
-                        const formattedUrl = `https://data.geo.admin.ch/browser/index.html#/collections/${collectionBaseURL}/items/${dateOnly}t${timeOnly}?&asset=asset-thumbnail.jpg`;
-
+                        const viewLink = `${CONFIG.mapGeoAdminUrl}?layers=WMS||swisseo_s2-sr_v100_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${CONFIG.collectionBaseURL}`;
+                        const image = `${CONFIG.dataGeoAdminUrl}${CONFIG.collectionBaseURL}/${dateOnly}t${timeOnly}/thumbnail.jpg`;
+                        const formattedUrl = `${CONFIG.dataGeoAdminUrl}browser/index.html#/collections/${CONFIG.collectionBaseURL}/items/${dateOnly}t${timeOnly}?&asset=asset-thumbnail.jpg`;
                         return { date: dateOnly, link: formattedUrl, downloadLink: formattedUrl, viewLink, image };
                     });
             };
@@ -196,16 +215,9 @@
             const initializeCalendar = async (calendarId) => {
                 const calendarEl = document.getElementById(calendarId);
                 const calendar = new FullCalendar.Calendar(calendarEl, {
-                    locale: 'de',
-                    buttonText: {
-                        today: 'Heute',
-                    },
-                    buttonHints: {
-                        today: 'Diesen Monat',
-                        prev: 'Vorheriger Monat',
-                        next: 'Nächster Monat'
-                    },
-
+                    locale: CONFIG.locale,
+                    buttonText: CONFIG.buttonText,
+                    buttonHints: CONFIG.buttonHints,
                     initialView: 'dayGridMonth',
                     events: async function (fetchInfo, successCallback, failureCallback) {
                         try {
@@ -224,29 +236,27 @@
                                 .filter(entry => entry.collection.trim() === 'S2_SR_HARMONIZED_SWISS')
                                 .forEach(entry => {
                                     if (!stacDates.has(entry.date)) {
-                                        let eventTitle = entry.remark; // Default to remark as the event title
-                                        let eventClass = 'no-data'; // Default class is 'no-data'
-                                        let iconHtml = ''; // For CSV data, we need to show the icons based on the remark
-
+                                        let eventTitle = entry.remark;
+                                        let eventClass = 'no-data';
+                                        let iconHtml = '';
                                         if (entry.remark.includes('cloudy')) {
                                             eventClass = 'cloudy';
-                                            iconHtml = '<i class="fa fa-cloud"></i>'; // Cloud icon
-                                            eventTitle = ''; // Empty title for 'cloudy' remark
+                                            iconHtml = '<i class="fa fa-cloud"></i>';
+                                            eventTitle = '';
                                         } else if (entry.remark.includes('No candidate scene') || entry.remark.includes('No S2 SR data available')) {
                                             eventClass = 'no-data';
-                                            iconHtml = '<i class="fa fa-times-circle"></i>'; // No data icon
-                                            eventTitle = ''; // Empty title for 'No candidate scene' and 'No S2 SR data available'
+                                            iconHtml = '<i class="fa fa-times-circle"></i>';
+                                            eventTitle = '';
                                         }
-
-                                        // Push event with the appropriate title and icon
                                         events.push({
-                                            title: eventTitle,  // Use the updated title
+                                            title: eventTitle,
                                             start: entry.date,
                                             className: eventClass,
                                             extendedProps: { iconHtml: iconHtml }
                                         });
                                     }
                                 });
+
                             forecastData.forEach(entry => {
                                 events.push({
                                     title: '',
@@ -255,7 +265,7 @@
                                     extendedProps: {
                                         orbit: entry.orbit,
                                         platform: entry.platform,
-                                        imageUrl: `https://github.com/davidoesch/Sentinel-2-Acquisition-Plan-Harvesting/raw/main/assets/${entry.orbit}.png`
+                                        imageUrl: `${CONFIG.acquisitionPlanIMG}${entry.orbit}.png`
                                     }
                                 });
                             });
@@ -275,7 +285,6 @@
 
                             let iconContainer = document.createElement('div');
                             iconContainer.classList.add('icon-container');
-
                             let eyeLink = document.createElement('a');
                             eyeLink.href = arg.event.extendedProps.viewLink;
                             eyeLink.target = '_blank';
@@ -293,7 +302,6 @@
                             let iconEl = document.createElement('div');
                             iconEl.innerHTML = arg.event.extendedProps.iconHtml;
                             arrayOfDomNodes.push(iconEl);
-
                             if (arg.event.title) {
                                 let titleEl = document.createElement('div');
                                 titleEl.classList.add('remark-text');
@@ -314,13 +322,11 @@
                         return { domNodes: arrayOfDomNodes };
                     }
                 });
-
                 calendar.render();
             };
 
             initializeCalendar('calendarS2');
         });
-
     </script>
 </body>
 
