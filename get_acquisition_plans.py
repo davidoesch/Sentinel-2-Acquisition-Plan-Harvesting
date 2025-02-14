@@ -135,6 +135,7 @@ def parse_kml_elements(li_elements, url_kml_prefix):
                         for i in range(len(href.split('/'))):
                             if href.split('/')[-i].endswith('kml'):
                                 kml_dict[href.split('/')[-i]] = str(url_kml_prefix + href)
+
     return kml_dict
 
 def get_latest_kml(kml_dict):
@@ -159,6 +160,7 @@ def get_latest_kml(kml_dict):
         if start_date < today < end_date:
             if latest_key is None or end_date > datetime.datetime.strptime(latest_key.split('_')[-1].split('.')[0], date_format):
                 latest_key = key
+
     return latest_key
 
 # URLs and paths
@@ -175,6 +177,7 @@ s2_tree = html.parse(ul.urlopen(S2_URL))
 
 liElementsS2A = []
 liElementsS2B = []
+liElementsS2C = []
 for tree in [s2_tree]:
     bodyElement = tree.findall('./')[1]
 
@@ -186,24 +189,35 @@ for tree in [s2_tree]:
         for li in div.findall('.//li'):
             liElementsS2B.append(li)
 
-# Extract .kml file links for Sentinel-2A and Sentinel-2B
+    for div in bodyElement.find(".//div[@class='sentinel-2c']"):
+        for li in div.findall('.//li'):
+            liElementsS2C.append(li)
+
+# Extract .kml file links for Sentinel-2A and Sentinel-2B and Sentinel-2C
 kml_dict_s2a = parse_kml_elements(liElementsS2A, URL_KML_PREFIX)
 kml_dict_s2b = parse_kml_elements(liElementsS2B, URL_KML_PREFIX)
+kml_dict_s2c = parse_kml_elements(liElementsS2C, URL_KML_PREFIX)
 
-# Find the latest .kml file for Sentinel-2A and Sentinel-2B
+# Find the latest .kml file for Sentinel-2A and Sentinel-2B and Sentinel-2C
 s2a_key = get_latest_kml(kml_dict_s2a)
 s2b_key = get_latest_kml(kml_dict_s2b)
+s2c_key = get_latest_kml(kml_dict_s2c)
 
-# Download and process the .kml files for Sentinel-2A and Sentinel-2B
+# Download and process the .kml files for Sentinel-2A and Sentinel-2B and Sentinel-2C
 S2A_OK = download_and_extract_kml('Sentinel-2', kml_dict_s2a[s2a_key], 'S2A_acquisition_plan', STORAGE_PATH, extract_area=True) if s2a_key else False
 S2B_OK = download_and_extract_kml('Sentinel-2', kml_dict_s2b[s2b_key], 'S2B_acquisition_plan', STORAGE_PATH, extract_area=True) if s2b_key else False
+S2C_OK = download_and_extract_kml('Sentinel-2', kml_dict_s2c[s2c_key], 'S2C_acquisition_plan', STORAGE_PATH, extract_area=True) if s2c_key else False
 
-# Merge the two files, add publish date and remove dates older than today
+# Merge the three files, add publish date and remove dates older than today
 MERGE_OK = merge_aoi_files(STORAGE_PATH,'acquisitionplan.csv')
 
-
 # Report success or failure
-if not (S2A_OK and S2B_OK and MERGE_OK ):
-    print("\nFailed to download and extract all Sentinel-2 data.")
+if not (S2A_OK and S2B_OK and S2C_OK and MERGE_OK):
+    print(f"")
+    print(f"**********************")
+    print(f"Sentinel-2A: {'Success' if S2A_OK else 'no planned aquisitions'}")
+    print(f"Sentinel-2B: {'Success' if S2B_OK else 'no planned aquisitions'}")
+    print(f"Sentinel-2C: {'Success' if S2C_OK else 'no planned aquisitions'}")
+    print(f"Merge: {'Success' if MERGE_OK else 'Failed'}")
 else:
     print("\nAll Sentinel-2 downloads and operations completed successfully.")
