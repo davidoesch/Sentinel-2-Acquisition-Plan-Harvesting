@@ -8,12 +8,16 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
 | 2025-03-04         | 2025-03-07     |     108 | S2B        | ![Coverage](assets/108.png) |
-| 2025-03-06         | 2025-03-09     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2025-03-07         | 2025-03-10     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2025-03-08         | 2025-03-11     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2025-03-09         | 2025-03-12     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2025-03-11         | 2025-03-14     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2025-03-12         | 2025-03-15     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2025-03-13         | 2025-03-16     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2025-03-14         | 2025-03-17     |     108 | S2B        | ![Coverage](assets/108.png) |
+| 2025-03-16         | 2025-03-19     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2025-03-19         | 2025-03-22     |     108 | S2C        | ![Coverage](assets/108.png) |
+| 2025-03-22         | 2025-03-25     |       8 | S2C        | ![Coverage](assets/8.png)   |
 
 ## Features
 
