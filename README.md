@@ -7,8 +7,6 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2025-04-08         | 2025-04-11     |     108 | S2C        | ![Coverage](assets/108.png) |
-| 2025-04-10         | 2025-04-13     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2025-04-10         | 2025-04-13     |     108 | S2A        | ![Coverage](assets/108.png) |
 | 2025-04-11         | 2025-04-14     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2025-04-12         | 2025-04-15     |      22 | S2C        | ![Coverage](assets/22.png)  |
@@ -16,10 +14,16 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 | 2025-04-13         | 2025-04-16     |       8 | S2A        | ![Coverage](assets/8.png)   |
 | 2025-04-14         | 2025-04-17     |      22 | S2A        | ![Coverage](assets/22.png)  |
 | 2025-04-15         | 2025-04-18     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2025-04-16         | 2025-04-19     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2025-04-17         | 2025-04-20     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2025-04-17         | 2025-04-20     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2025-04-18         | 2025-04-21     |     108 | S2C        | ![Coverage](assets/108.png) |
+| 2025-04-20         | 2025-04-23     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2025-04-20         | 2025-04-23     |     108 | S2A        | ![Coverage](assets/108.png) |
 | 2025-04-21         | 2025-04-24     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2025-04-23         | 2025-04-26     |     108 | S2B        | ![Coverage](assets/108.png) |
+| 2025-04-26         | 2025-04-29     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2025-04-27         | 2025-04-30     |      22 | S2B        | ![Coverage](assets/22.png)  |
 
 ## Features
 
