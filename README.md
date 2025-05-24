@@ -7,15 +7,14 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2025-05-21         | 2025-05-24     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2025-05-22         | 2025-05-25     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2025-05-23         | 2025-05-26     |     108 | S2B        | ![Coverage](assets/108.png) |
 | 2025-05-23         | 2025-05-26     |       8 | S2A        | ![Coverage](assets/8.png)   |
 | 2025-05-24         | 2025-05-27     |      22 | S2A        | ![Coverage](assets/22.png)  |
 | 2025-05-25         | 2025-05-28     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2025-05-26         | 2025-05-29     |       8 | S2B        | ![Coverage](assets/8.png)   |
-| 2025-05-27         | 2025-05-30     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2025-05-27         | 2025-05-30     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2025-05-27         | 2025-05-30     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2025-05-28         | 2025-05-31     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2025-05-30         | 2025-06-02     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2025-05-30         | 2025-06-02     |     108 | S2A        | ![Coverage](assets/108.png) |
