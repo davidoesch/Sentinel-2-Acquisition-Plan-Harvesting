@@ -8,8 +8,6 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
 | 2025-07-09         | 2025-07-12     |      65 | S2B        | ![Coverage](assets/65.png)  |
-| 2025-07-09         | 2025-07-12     |     108 | S2A        | ![Coverage](assets/108.png) |
-| 2025-07-10         | 2025-07-13     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2025-07-11         | 2025-07-14     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2025-07-12         | 2025-07-15     |     108 | S2B        | ![Coverage](assets/108.png) |
 | 2025-07-12         | 2025-07-15     |       8 | S2A        | ![Coverage](assets/8.png)   |
@@ -17,7 +15,17 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 | 2025-07-14         | 2025-07-17     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2025-07-15         | 2025-07-18     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2025-07-16         | 2025-07-19     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2025-07-16         | 2025-07-19     |      65 | S2A        | ![Coverage](assets/65.png)  |
+| 2025-07-17         | 2025-07-20     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2025-07-19         | 2025-07-22     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2025-07-19         | 2025-07-22     |     108 | S2A        | ![Coverage](assets/108.png) |
+| 2025-07-20         | 2025-07-23     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2025-07-21         | 2025-07-24     |      22 | S2C        | ![Coverage](assets/22.png)  |
+| 2025-07-22         | 2025-07-25     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2025-07-23         | 2025-07-26     |      22 | S2A        | ![Coverage](assets/22.png)  |
+| 2025-07-24         | 2025-07-27     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2025-07-26         | 2025-07-29     |      65 | S2A        | ![Coverage](assets/65.png)  |
+| 2025-07-27         | 2025-07-30     |     108 | S2C        | ![Coverage](assets/108.png) |
 
 ## Features
 
