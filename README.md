@@ -7,18 +7,21 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2025-10-14         | 2025-10-17     |      65 | S2A        | ![Coverage](assets/65.png)  |
-| 2025-10-14         | 2025-10-17     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2025-10-15         | 2025-10-18     |     108 | S2C        | ![Coverage](assets/108.png) |
-| 2025-10-17         | 2025-10-20     |     108 | S2A        | ![Coverage](assets/108.png) |
 | 2025-10-17         | 2025-10-20     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2025-10-18         | 2025-10-21     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2025-10-18         | 2025-10-21     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2025-10-19         | 2025-10-22     |      22 | S2C        | ![Coverage](assets/22.png)  |
-| 2025-10-20         | 2025-10-23     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2025-10-19         | 2025-10-22     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2025-10-20         | 2025-10-23     |     108 | S2B        | ![Coverage](assets/108.png) |
+| 2025-10-22         | 2025-10-25     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2025-10-23         | 2025-10-26     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2025-10-24         | 2025-10-27     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2025-10-25         | 2025-10-28     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2025-10-27         | 2025-10-30     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2025-10-28         | 2025-10-31     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2025-10-29         | 2025-11-01     |      22 | S2C        | ![Coverage](assets/22.png)  |
+| 2025-11-01         | 2025-11-04     |      65 | S2C        | ![Coverage](assets/65.png)  |
 
 ## Features
 
