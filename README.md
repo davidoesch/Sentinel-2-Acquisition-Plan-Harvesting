@@ -5,17 +5,11 @@
 This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available see [Example of HISTORIC and FUTURE S2 data](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html).
 
 ## Acquisition Plan Sentinel-2 Switzerland
-| Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
-|:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2025-10-20         | 2025-10-23     |     108 | S2B        | ![Coverage](assets/108.png) |
-| 2025-10-22         | 2025-10-25     |      65 | S2C        | ![Coverage](assets/65.png)  |
-| 2025-10-23         | 2025-10-26     |       8 | S2B        | ![Coverage](assets/8.png)   |
-| 2025-10-24         | 2025-10-27     |      22 | S2B        | ![Coverage](assets/22.png)  |
-| 2025-10-25         | 2025-10-28     |     108 | S2C        | ![Coverage](assets/108.png) |
-| 2025-10-27         | 2025-10-30     |      65 | S2B        | ![Coverage](assets/65.png)  |
-| 2025-10-28         | 2025-10-31     |       8 | S2C        | ![Coverage](assets/8.png)   |
-| 2025-10-29         | 2025-11-01     |      22 | S2C        | ![Coverage](assets/22.png)  |
-| 2025-11-01         | 2025-11-04     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                   |
+|:-------------------|:---------------|--------:|:-----------|:---------------------------|
+| 2025-10-23         | 2025-10-26     |       8 | S2B        | ![Coverage](assets/8.png)  |
+| 2025-10-24         | 2025-10-27     |      22 | S2B        | ![Coverage](assets/22.png) |
+| 2025-10-27         | 2025-10-30     |      65 | S2B        | ![Coverage](assets/65.png) |
 
 ## Features
 
