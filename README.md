@@ -7,9 +7,7 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2026-03-10         | 2026-03-13     |      22 | S2A        | ![Coverage](assets/22.png)  |
 | 2026-03-11         | 2026-03-14     |      65 | S2C        | ![Coverage](assets/65.png)  |
-| 2026-03-12         | 2026-03-15     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2026-03-13         | 2026-03-16     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2026-03-13         | 2026-03-16     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2026-03-14         | 2026-03-17     |     108 | S2C        | ![Coverage](assets/108.png) |
@@ -17,10 +15,15 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 | 2026-03-16         | 2026-03-19     |     108 | S2A        | ![Coverage](assets/108.png) |
 | 2026-03-17         | 2026-03-20     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2026-03-18         | 2026-03-21     |      22 | S2C        | ![Coverage](assets/22.png)  |
+| 2026-03-19         | 2026-03-22     |     108 | S2B        | ![Coverage](assets/108.png) |
 | 2026-03-19         | 2026-03-22     |       8 | S2A        | ![Coverage](assets/8.png)   |
 | 2026-03-20         | 2026-03-23     |      22 | S2A        | ![Coverage](assets/22.png)  |
 | 2026-03-21         | 2026-03-24     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2026-03-22         | 2026-03-25     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2026-03-23         | 2026-03-26     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2026-03-23         | 2026-03-26     |      65 | S2A        | ![Coverage](assets/65.png)  |
+| 2026-03-26         | 2026-03-29     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2026-03-29         | 2026-04-01     |     108 | S2B        | ![Coverage](assets/108.png) |
 
 ## Features
 
