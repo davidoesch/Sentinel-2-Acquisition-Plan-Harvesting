@@ -1,36 +1,31 @@
 #!/usr/bin/python3.10
 
 """
-Script for harvesting .kml information for Sentinel-2 acquisition plans from sentinels.copernicus.eu.
-Extracts user-defined Area of Interest (AOI) polygons from the acquisition plan, stores it as CSV.
+Harvest Sentinel-2 acquisition plans from sentinels.copernicus.eu.
 
-Fixes vs. original:
-  - HTML parser replaced: div[@class='sentinel-2x'] -> h4-based section detection
-    (ESA migrated to sentinels.copernicus.eu; CSS class structure no longer present)
-  - get_latest_kml(): date format now case-insensitive (.upper()); fallback to most
-    recent KML when no file covers today (e.g. ESA publishes with slight delay)
-  - parse_kml_elements(): href matching generalised; no longer requires href to end
-    in '00' or contain '.kml' suffix (ESA uses bare document slugs)
-  - All three satellites (S2A, S2B, S2C) handled symmetrically
+Scraping strategy (robust against ESA Liferay quirks):
+  1. HTTP fetch with realistic User-Agent and cache-busting query parameter
+  2. Section detection via <h2-h5> headings containing "sentinel-2[abc]"
+  3. KML URL extraction via REGEX on the FULL href (not just last path segment)
+     - Catches /documents/d/sentinel/<slug>            (canonical)
+     - Catches /documents/247904/<id>/<slug>/version/x (Liferay variant)
+  4. Fallback regex scan over raw HTML, assigns to satellite by slug prefix
+  5. KML selection: prefer active (today in window), else most recent
 
-Inspired by https://github.com/hevgyrt/harvest_sentinel_acquisition_plans/
-
-USAGE:
-    python get_acquisition_plans.py
-
-Author: David Oesch
-Date: 2024-09-26 / updated 2026-05-21
+Author: David Oesch (original), updated 2026-05-21
 """
 
 import datetime
 import os
+import re
+import time
 import urllib.request as ul
 from datetime import timedelta
 
 import pandas as pd  # type: ignore
 from lxml import html
 
-from extract_acquisition_plans_s2 import extract_S2_entries  # in-house developed method
+from extract_acquisition_plans_s2 import extract_S2_entries
 
 
 # ---------------------------------------------------------------------------
@@ -41,87 +36,114 @@ S2_URL = "https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2/acq
 URL_KML_PREFIX = "https://sentinels.copernicus.eu"
 STORAGE_PATH = os.getcwd() + "/"
 
-# Polygon defining the Area of Interest (AOI) – default: Switzerland
 POLYGON_WKT = (
     "POLYGON((5.96 46.13,6.03 46.66,6.91 47.52,8.56 47.90,9.78 47.65,"
     "9.91 47.17,10.70 46.96,10.60 46.47,10.08 46.11,9.06 45.74,7.13 45.77,5.96 46.13))"
 )
 
-# Date format used in ESA KML filenames (lowercase 't' separator)
 DATE_FORMAT = "%Y%m%dt%H%M%S"
 
+# Matches the KML slug anywhere in a URL or text
+KML_SLUG_RE = re.compile(
+    r"(s2[abc]_mp_acq__kml_\d{8}t\d{6}_\d{8}t\d{6})",
+    re.IGNORECASE,
+)
+
+# Matches a full href containing a KML slug (fallback regex scan)
+KML_HREF_RE = re.compile(
+    r'href="(/documents/[^"]*?s2[abc]_mp_acq__kml_\d{8}t\d{6}_\d{8}t\d{6}[^"]*)"',
+    re.IGNORECASE,
+)
+
+HTTP_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+}
+
 
 # ---------------------------------------------------------------------------
-# HTML parsing
+# HTTP fetch
 # ---------------------------------------------------------------------------
 
-def parse_acquisition_page(url):
-    """
-    Fetch and parse the ESA Sentinel-2 acquisition plans page.
-    Returns a dict: {'S2A': [li, ...], 'S2B': [li, ...], 'S2C': [li, ...]}
-
-    Robust against ESA site redesigns: uses <h4> headings to identify sections
-    instead of CSS class names (which changed after migration to copernicus.eu).
-    """
-    tree = html.parse(ul.urlopen(url))
-    root = tree.getroot()
-
-    satellites = {"S2A": [], "S2B": [], "S2C": []}
-    current = None
-
-    satellite_map = {
-        "sentinel-2a": "S2A",
-        "sentinel-2b": "S2B",
-        "sentinel-2c": "S2C",
-    }
-
-    for el in root.iter():
-        if el.tag in ("h3", "h4"):
-            text = (el.text_content() or "").strip().lower()
-            current = None
-            for key, sat in satellite_map.items():
-                if key in text:
-                    current = sat
-                    break
-        elif el.tag == "li" and current:
-            satellites[current].append(el)
-
-    for sat, items in satellites.items():
-        print(f"  {sat}: {len(items)} KML link(s) found on page")
-
-    return satellites
+def fetch_html(url):
+    """Fetch URL with realistic headers and cache busting; return decoded text."""
+    cache_buster = f"?_t={int(time.time())}"
+    req = ul.Request(url + cache_buster, headers=HTTP_HEADERS)
+    with ul.urlopen(req, timeout=30) as resp:
+        return resp.read().decode("utf-8", errors="replace")
 
 
 # ---------------------------------------------------------------------------
 # KML link extraction
 # ---------------------------------------------------------------------------
 
-def parse_kml_elements(li_elements, url_kml_prefix):
+def extract_kml_links(html_text):
     """
-    Parse KML URLs from a list of <li> elements.
+    Extract Sentinel-2 KML links per satellite.
 
-    Returns a dict mapping KML filename slug -> full URL.
-    Handles both:
-      - href ending in bare slug  (e.g. /documents/d/sentinel/s2c_mp_acq__kml_...)
-      - href containing .kml      (legacy format)
+    Returns: {'S2A': {slug: full_url}, 'S2B': {...}, 'S2C': {...}}
+
+    Two-stage approach:
+      Stage 1: section-aware DOM parse (uses <h*> headings as anchors)
+      Stage 2: raw-HTML regex fallback (assigns by slug prefix s2a/s2b/s2c)
     """
-    kml_dict = {}
+    result = {"S2A": {}, "S2B": {}, "S2C": {}}
 
-    for li in li_elements:
-        for el in li.iter():
-            href = el.get("href", "")
-            if not href.startswith("/documents"):
-                continue
+    # --- Stage 1: section-aware DOM parsing ---
+    try:
+        tree = html.fromstring(html_text)
+        section_map = {
+            "sentinel-2a": "S2A",
+            "sentinel-2b": "S2B",
+            "sentinel-2c": "S2C",
+        }
+        current = None
+        for el in tree.iter():
+            if el.tag in ("h2", "h3", "h4", "h5"):
+                text = (el.text_content() or "").strip().lower()
+                current = None
+                for key, sat in section_map.items():
+                    if key in text:
+                        current = sat
+                        break
+            elif current and el.tag == "a":
+                href = el.get("href", "")
+                match = KML_SLUG_RE.search(href)
+                if match:
+                    slug = match.group(1).lower()
+                    full_url = href if href.startswith("http") else URL_KML_PREFIX + href
+                    result[current][slug] = full_url
+    except Exception as exc:
+        print(f"  WARNING: DOM parsing failed: {exc}")
 
-            slug = href.split("/")[-1]
+    # --- Stage 2: regex fallback over raw HTML ---
+    # Assigns to satellite by slug prefix, independent of DOM structure.
+    stage2_added = {"S2A": 0, "S2B": 0, "S2C": 0}
+    for href_match in KML_HREF_RE.finditer(html_text):
+        href = href_match.group(1)
+        slug_match = KML_SLUG_RE.search(href)
+        if not slug_match:
+            continue
+        slug = slug_match.group(1).lower()
+        sat = "S" + slug[1:3].upper()
+        if sat not in result:
+            continue
+        full_url = href if href.startswith("http") else URL_KML_PREFIX + href
+        if slug not in result[sat]:
+            result[sat][slug] = full_url
+            stage2_added[sat] += 1
 
-            # Accept slugs that look like acquisition plan filenames
-            if "_mp_acq_" in slug or slug.endswith(".kml"):
-                # Normalise: strip .kml suffix for consistent key handling
-                key = slug.replace(".kml", "")
-                kml_dict[key] = url_kml_prefix + href
+    for sat in ("S2A", "S2B", "S2C"):
+        extra = f" (+{stage2_added[sat]} via regex fallback)" if stage2_added[sat] else ""
+        print(f"  {sat}: {len(result[sat])} KML link(s) extracted{extra}")
 
-    return kml_dict
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -130,88 +152,70 @@ def parse_kml_elements(li_elements, url_kml_prefix):
 
 def get_latest_kml(kml_dict):
     """
-    Find the best available KML file from the given dict.
+    Pick the best KML from {slug: url}.
 
     Priority:
-      1. A file whose time window contains today (start < today < end).
-      2. Fallback: the file with the most recent end_date (handles ESA
-         publishing delay where the new KML is not yet listed on the page).
-
-    Date format in filenames is case-insensitive (handles both 't' and 'T').
+      1. KML whose [start, end] window contains today (newest end_date wins)
+      2. Fallback: KML with most recent end_date overall
     """
     today = datetime.datetime.now()
-    best_active = None
-    best_active_end = None
-    best_fallback = None
-    best_fallback_end = None
+    best_active, best_active_end = None, None
+    best_fallback, best_fallback_end = None, None
 
-    for key in kml_dict:
-        parts = key.split("_")
+    for slug in kml_dict:
+        parts = slug.split("_")
         if len(parts) < 2:
             continue
         try:
-            start_str = parts[-2].upper().replace("T", "t")
-            end_str = parts[-1].split(".")[0].upper().replace("T", "t")
+            start_str = parts[-2].lower()
+            end_str = parts[-1].split(".")[0].lower()
             start_date = datetime.datetime.strptime(start_str, DATE_FORMAT)
             end_date = datetime.datetime.strptime(end_str, DATE_FORMAT)
         except (ValueError, IndexError):
-            print(f"  WARNING: could not parse dates from key '{key}', skipping")
+            print(f"  WARNING: cannot parse dates from '{slug}', skipping")
             continue
 
         if start_date < today < end_date:
             if best_active_end is None or end_date > best_active_end:
-                best_active = key
-                best_active_end = end_date
+                best_active, best_active_end = slug, end_date
         else:
             if best_fallback_end is None or end_date > best_fallback_end:
-                best_fallback = key
-                best_fallback_end = end_date
+                best_fallback, best_fallback_end = slug, end_date
 
     if best_active:
-        print(f"  -> Active KML selected: {best_active}")
+        print(f"  -> Active KML: {best_active}")
         return best_active
-
     if best_fallback:
-        print(f"  -> No active KML found; using most recent available: {best_fallback}")
+        print(f"  -> No active KML; fallback to: {best_fallback}")
         return best_fallback
-
     return None
 
 
 # ---------------------------------------------------------------------------
-# Download and extraction
+# Download and AOI extraction
 # ---------------------------------------------------------------------------
 
-def download_and_extract_kml(satellite, file_url, output_filename, output_path, extract_area=False):
-    """
-    Download a .kml file and optionally extract AOI entries.
-
-    Returns True on success, False on failure.
-    """
+def download_and_extract_kml(file_url, output_filename, output_path):
+    """Download KML and extract AOI entries to <output_filename>_AOI.csv."""
     kml_file_path = os.path.join(output_path, output_filename + ".kml")
-
     try:
-        ul.urlretrieve(file_url, filename=kml_file_path)
+        req = ul.Request(file_url, headers=HTTP_HEADERS)
+        with ul.urlopen(req, timeout=60) as resp, open(kml_file_path, "wb") as fh:
+            fh.write(resp.read())
         print(f"  Downloaded: {file_url}")
     except Exception as exc:
         print(f"  ERROR downloading {file_url}: {exc}")
         return False
 
-    if extract_area and satellite == "Sentinel-2":
-        # Derive platform tag from output filename (S2A / S2B / S2C)
-        platform_tag = output_filename[:3].upper()
-        entries = extract_S2_entries(
-            platform_tag,
-            kml_file_path,
-            output_filename + "_AOI.csv",
-            output_path,
-            POLYGON_WKT,
-        )
-        if not entries:
-            print(f"  WARNING: No AOI entries extracted from {output_filename}")
-            return False
-        print(f"  AOI extraction successful: {output_filename}")
-
+    platform_tag = output_filename[:3].upper()
+    entries = extract_S2_entries(
+        platform_tag, kml_file_path, output_filename + "_AOI.csv",
+        output_path, POLYGON_WKT,
+    )
+    if not entries:
+        print(f"  WARNING: no AOI entries extracted from {output_filename}")
+        return False
+    print(f"  AOI extraction successful: {output_filename}")
     return True
 
 
@@ -220,13 +224,8 @@ def download_and_extract_kml(satellite, file_url, output_filename, output_path, 
 # ---------------------------------------------------------------------------
 
 def merge_aoi_files(directory, output_file):
-    """
-    Merge all *_AOI.csv files, remove entries older than today-2 days,
-    add Publish Date (+3 days), sort by Acquisition Date.
-
-    Returns True if output was written, False otherwise.
-    """
-    merged_data = []
+    """Merge *_AOI.csv; filter dates >= today-2; add Publish Date (+3 days)."""
+    merged = []
     today = datetime.datetime.now().date()
 
     for filename in sorted(os.listdir(directory)):
@@ -237,30 +236,26 @@ def merge_aoi_files(directory, output_file):
         try:
             df = pd.read_csv(filepath)
         except Exception as exc:
-            print(f"  WARNING: could not read {filepath}: {exc}")
+            print(f"  WARNING: cannot read {filepath}: {exc}")
             continue
 
         df["Acquisition Date"] = pd.to_datetime(df["ObservationTimeStart"]).dt.date
         df = df[df["Acquisition Date"] >= today - timedelta(days=2)]
-
         if df.empty:
             continue
-
         df["Publish Date"] = df["Acquisition Date"] + timedelta(days=3)
         df = df[["Acquisition Date", "Publish Date", "OrbitRelative", "Platform"]]
         df.rename(columns={"OrbitRelative": "Orbit"}, inplace=True)
-        merged_data.append(df)
+        merged.append(df)
 
-    if merged_data:
-        result_df = pd.concat(merged_data)
-        result_df.sort_values(by="Acquisition Date", inplace=True)
-        result_df.drop_duplicates(inplace=True)
-        result_df.to_csv(output_file, index=False)
-        print(f"  Merged output saved: {output_file}")
-        return True
+    if not merged:
+        print("  No valid AOI data found.")
+        return False
 
-    print("  No valid AOI data found for merge.")
-    return False
+    out = pd.concat(merged).drop_duplicates().sort_values(by="Acquisition Date")
+    out.to_csv(output_file, index=False)
+    print(f"  Merged output saved: {output_file}")
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -269,33 +264,37 @@ def merge_aoi_files(directory, output_file):
 
 def main():
     print("Fetching Sentinel-2 acquisition plan page ...")
-    satellite_li = parse_acquisition_page(S2_URL)
+    html_text = fetch_html(S2_URL)
+    print(f"  Page size: {len(html_text)} bytes")
 
-    satellites = {
-        "S2A": ("S2A_acquisition_plan", satellite_li["S2A"]),
-        "S2B": ("S2B_acquisition_plan", satellite_li["S2B"]),
-        "S2C": ("S2C_acquisition_plan", satellite_li["S2C"]),
+    kml_links = extract_kml_links(html_text)
+
+    output_names = {
+        "S2A": "S2A_acquisition_plan",
+        "S2B": "S2B_acquisition_plan",
+        "S2C": "S2C_acquisition_plan",
     }
 
     results = {}
-
-    for sat, (output_name, li_elements) in satellites.items():
+    for sat, output_name in output_names.items():
         print(f"\nProcessing {sat} ...")
-        kml_dict = parse_kml_elements(li_elements, URL_KML_PREFIX)
-        print(f"  KML entries parsed: {list(kml_dict.keys())}")
+        kml_dict = kml_links[sat]
+        if not kml_dict:
+            print(f"  No KML links found for {sat}")
+            results[sat] = False
+            continue
+
+        # Diagnostic: list all available slugs, newest first
+        for slug in sorted(kml_dict.keys(), reverse=True):
+            print(f"    {slug}")
 
         key = get_latest_kml(kml_dict)
         if not key:
-            print(f"  No KML available for {sat}")
             results[sat] = False
             continue
 
         results[sat] = download_and_extract_kml(
-            "Sentinel-2",
-            kml_dict[key],
-            output_name,
-            STORAGE_PATH,
-            extract_area=True,
+            kml_dict[key], output_name, STORAGE_PATH,
         )
 
     print("\nMerging AOI CSV files ...")
@@ -307,7 +306,7 @@ def main():
     print(f"  Merge: {'Success' if merge_ok else 'Failed'}")
 
     if all(results.values()) and merge_ok:
-        print("\nAll Sentinel-2 downloads and operations completed successfully.")
+        print("\nAll Sentinel-2 operations completed successfully.")
     else:
         print("\nCompleted with warnings (see above).")
 
