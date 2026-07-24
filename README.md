@@ -7,16 +7,26 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2026-07-21         | 2026-07-24     |      65 | S2A        | ![Coverage](assets/65.png)  |
-| 2026-07-22         | 2026-07-25     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2026-07-24         | 2026-07-27     |     108 | S2A        | ![Coverage](assets/108.png) |
 | 2026-07-24         | 2026-07-27     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2026-07-25         | 2026-07-28     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2026-07-26         | 2026-07-29     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2026-07-27         | 2026-07-30     |     108 | S2B        | ![Coverage](assets/108.png) |
+| 2026-07-27         | 2026-07-30     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2026-07-28         | 2026-07-31     |      22 | S2A        | ![Coverage](assets/22.png)  |
+| 2026-07-29         | 2026-08-01     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2026-07-30         | 2026-08-02     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2026-07-31         | 2026-08-03     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2026-07-31         | 2026-08-03     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2026-08-01         | 2026-08-04     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2026-08-03         | 2026-08-06     |      65 | S2B        | ![Coverage](assets/65.png)  |
+| 2026-08-03         | 2026-08-06     |     108 | S2A        | ![Coverage](assets/108.png) |
+| 2026-08-04         | 2026-08-07     |       8 | S2C        | ![Coverage](assets/8.png)   |
+| 2026-08-05         | 2026-08-08     |      22 | S2C        | ![Coverage](assets/22.png)  |
+| 2026-08-06         | 2026-08-09     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2026-08-07         | 2026-08-10     |      22 | S2A        | ![Coverage](assets/22.png)  |
+| 2026-08-08         | 2026-08-11     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2026-08-10         | 2026-08-13     |      65 | S2A        | ![Coverage](assets/65.png)  |
 
 ## Features
 
