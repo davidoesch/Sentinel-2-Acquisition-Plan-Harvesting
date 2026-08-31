@@ -7,7 +7,6 @@ This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisit
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2026-08-28         | 2026-08-31     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2026-08-29         | 2026-09-01     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2026-08-30         | 2026-09-02     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2026-08-30         | 2026-09-02     |      22 | S2B        | ![Coverage](assets/22.png)  |
