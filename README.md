@@ -2,7 +2,7 @@
 
 # Sentinel-2 Acquisition Plan Harvesting and Extraction
 
-This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinel.esa.int/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available see [Example of HISTORIC and FUTURE S2 data](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html).
+This project is a toolset for harvesting and processing [ESA Sentinel-2 acquisition plans](https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2/acquisition-plans), extracting relevant metadata of upcoming satellite passes for a given Area of Interest (AOI), and exporting the data into CSV file. The scripts allow users to extract acquisition data from Sentinel-2 .kml files, define an AOI polygon, and filter acquisition dates. Goal: to use it in https://github.com/swisstopo/topo-satromo/ context to show end users when the next satellite product will be available see [Example of HISTORIC and FUTURE S2 data](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html).
 
 It also tracks how fast acquired scenes actually show up in the swisstopo STAC catalog: see the [Sentinel-2 catalog latency map](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/latency/).
 
@@ -87,7 +87,7 @@ swissEO S2-SR **v200** collection:
 - days without imagery (cloudy / no candidate scene / tile upload incomplete) from [`dates_with_no_imagery.csv`](https://data.geo.admin.ch/ch.swisstopo.swisseo_s2-sr_v200/dates_with_no_imagery.csv)
 - planned acquisitions with orbit coverage from `acquisitionplan.csv`, with the expected publication time (median latency of the last 30 days)
 
-Options: `?lang=en` (default German), `?embed=1` (no header, stats or side panel, for iframes), `#2026-11` / `#2026-11-04` to open a month or day.
+Options: `?lang=de` (default English), `?embed=1` (no header, stats or side panel, for iframes), `#2026-11` / `#2026-11-04` to open a month or day.
 Everything is fetched by the browser, so the page works as a static GitHub Pages site and under Flask.
 
 ## Sentinel-2 catalog latency map

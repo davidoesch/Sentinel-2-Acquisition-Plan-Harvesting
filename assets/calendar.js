@@ -5,7 +5,7 @@
  *   - dates_with_no_imagery.csv of the same collection -> cloudy / no candidate scene / upload incomplete
  *   - acquisitionplan.csv of this repository          -> planned acquisitions (ESA KML, Switzerland AOI)
  *
- * URL options: ?lang=en|de  ?embed=1 (no header/side panel, for iframes)  #YYYY-MM or #YYYY-MM-DD
+ * URL options: ?lang=de (default English)  ?embed=1 (no header/side panel, for iframes)  #YYYY-MM or #YYYY-MM-DD
  */
 (function () {
     "use strict";
@@ -79,7 +79,7 @@
     };
 
     const params = new URLSearchParams(location.search);
-    const LANG = params.get("lang") === "en" ? "en" : params.get("lang") === "de" ? "de" : "de";
+    const LANG = params.get("lang") === "de" ? "de" : "en"; // English by default, ?lang=de for German
     const T = I18N[LANG];
 
     const BINS = [
@@ -389,7 +389,7 @@
         document.querySelectorAll("[data-i18n]").forEach((e) => (e.textContent = T[e.dataset.i18n]));
         document.querySelectorAll("[data-i18n-html]").forEach((e) => (e.innerHTML = T[e.dataset.i18nHtml]));
         document.querySelectorAll("[data-i18n-aria]").forEach((e) => e.setAttribute("aria-label", T[e.dataset.i18nAria]));
-        if (LANG !== "de") document.querySelector('.nav a[href="calendar.html"]').href = `calendar.html?lang=${LANG}`;
+        if (LANG !== "en") document.querySelector('.nav a[href="calendar.html"]').href = `calendar.html?lang=${LANG}`;
 
         const weekdays = [...Array(7)].map((_, i) => new Intl.DateTimeFormat(T.locale, { timeZone: "UTC", weekday: "short" })
             .format(new Date(Date.UTC(2024, 0, 1 + i)))); // 2024-01-01 is a Monday

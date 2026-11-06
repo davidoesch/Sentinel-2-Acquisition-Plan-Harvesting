@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,26 +11,26 @@
 <body>
 <header class="top">
     <div>
-        <h1 data-i18n="title">swissEO Sentinel-2 Datenverfügbarkeit</h1>
+        <h1 data-i18n="title">swissEO Sentinel-2 data availability</h1>
         <p class="sub" data-i18n-html="subtitle"></p>
     </div>
     <nav class="nav" aria-label="Pages">
-        <a href="calendar.html" aria-current="page" data-i18n="navCalendar">Kalender</a>
-        <a href="latency/" data-i18n="navLatency">Latenzkarte</a>
+        <a href="calendar.html" aria-current="page" data-i18n="navCalendar">Calendar</a>
+        <a href="latency/" data-i18n="navLatency">Latency map</a>
     </nav>
 </header>
 
 <section class="cal-bar">
     <div class="month-nav">
-        <button type="button" id="prev" data-i18n-aria="prev" aria-label="Vorheriger Monat">&#8249;</button>
+        <button type="button" id="prev" data-i18n-aria="prev" aria-label="Previous month">&#8249;</button>
         <h2 id="month-label" aria-live="polite"></h2>
-        <button type="button" id="next" data-i18n-aria="next" aria-label="Nächster Monat">&#8250;</button>
-        <button type="button" id="today" data-i18n="today">Heute</button>
+        <button type="button" id="next" data-i18n-aria="next" aria-label="Next month">&#8250;</button>
+        <button type="button" id="today" data-i18n="today">Today</button>
     </div>
     <div class="legend" id="legend"></div>
 </section>
 
-<section class="stats" id="stats" aria-label="Monatsübersicht"></section>
+<section class="stats" id="stats" aria-label="Month summary"></section>
 
 <main class="cal-layout">
     <div class="cal" id="cal" role="grid" aria-labelledby="month-label">

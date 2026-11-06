@@ -180,6 +180,8 @@ button.day:hover { background: var(--surface-2); border-color: var(--grid); }
 }
 .detail .big img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
 .detail .big.plan-img { background: var(--surface-2); }
+/* orbit coverage PNGs are small: show at natural size instead of upscaling */
+.detail .big.plan-img img { width: auto; height: auto; max-width: 100%; max-height: 100%; }
 .detail dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 13px; }
 .detail dt { color: var(--text-secondary); }
 .detail dd { margin: 0; font-variant-numeric: tabular-nums; }
