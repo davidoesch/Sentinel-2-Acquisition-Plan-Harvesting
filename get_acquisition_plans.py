@@ -1,4 +1,4 @@
-#!/usr/bin/python3.10
+#!/usr/bin/env python3
 
 """
 Harvest Sentinel-2 acquisition plans from sentinels.copernicus.eu.
@@ -12,12 +12,17 @@ Scraping strategy (robust against ESA Liferay quirks):
   4. Fallback regex scan over raw HTML, assigns to satellite by slug prefix
   5. KML selection: prefer active (today in window), else most recent
 
-Author: David Oesch (original), updated 2026-05-21
+  6. Candidate fallback: if the newest KML is not yet public (HTTP 404), the
+     next one is tried; URLs are also retried with a trailing ":"
+
+Author: David Oesch (original), updated 2026-11-06
+(synced with satromo-v2-personal/main_functions/util_get_acquisition_plans.py)
 """
 
 import datetime
 import os
 import re
+import sys
 import time
 import urllib.request as ul
 from datetime import timedelta
@@ -34,7 +39,11 @@ from extract_acquisition_plans_s2 import extract_S2_entries
 
 S2_URL = "https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-2/acquisition-plans"
 URL_KML_PREFIX = "https://sentinels.copernicus.eu"
-STORAGE_PATH = os.getcwd() + "/"
+STORAGE_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
+OUTPUT_CSV = os.path.join(STORAGE_PATH, "acquisitionplan.csv")
+
+# Days between acquisition and product publication (swissEO / topo-satromo)
+PUBLISH_DELAY_DAYS = 3
 
 POLYGON_WKT = (
     "POLYGON((5.96 46.13,6.03 46.66,6.91 47.52,8.56 47.90,9.78 47.65,"
@@ -150,17 +159,21 @@ def extract_kml_links(html_text):
 # KML selection
 # ---------------------------------------------------------------------------
 
-def get_latest_kml(kml_dict):
+def get_kml_candidates(kml_dict):
     """
-    Pick the best KML from {slug: url}.
+    Order the KMLs from {slug: url} from best to worst.
 
     Priority:
-      1. KML whose [start, end] window contains today (newest end_date wins)
-      2. Fallback: KML with most recent end_date overall
+      1. KMLs whose [start, end] window contains today (newest end_date first)
+      2. All other KMLs (newest end_date first)
+
+    A list is returned (not only the best one) because ESA sometimes links a
+    freshly uploaded KML that is not yet public (HTTP 404). In that case the
+    caller tries the next candidate.
     """
     today = datetime.datetime.now()
-    best_active, best_active_end = None, None
-    best_fallback, best_fallback_end = None, None
+    active = []
+    others = []
 
     for slug in kml_dict:
         parts = slug.split("_")
@@ -176,37 +189,58 @@ def get_latest_kml(kml_dict):
             continue
 
         if start_date < today < end_date:
-            if best_active_end is None or end_date > best_active_end:
-                best_active, best_active_end = slug, end_date
+            active.append((end_date, slug))
         else:
-            if best_fallback_end is None or end_date > best_fallback_end:
-                best_fallback, best_fallback_end = slug, end_date
+            others.append((end_date, slug))
 
-    if best_active:
-        print(f"  -> Active KML: {best_active}")
-        return best_active
-    if best_fallback:
-        print(f"  -> No active KML; fallback to: {best_fallback}")
-        return best_fallback
-    return None
+    active.sort(reverse=True)
+    others.sort(reverse=True)
+
+    candidates = []
+    for end_date, slug in active:
+        candidates.append(slug)
+    for end_date, slug in others:
+        candidates.append(slug)
+    return candidates
 
 
 # ---------------------------------------------------------------------------
 # Download and AOI extraction
 # ---------------------------------------------------------------------------
 
-def download_and_extract_kml(file_url, output_filename, output_path):
-    """Download KML and extract AOI entries to <output_filename>_AOI.csv."""
+def download_kml(file_url, output_filename, output_path):
+    """
+    Download KML to <output_filename>.kml; return True on success.
+
+    Some ESA files are stored with a trailing ":" in their URL, but the link
+    on the acquisition plan page omits it (HTTP 404). So if the linked URL
+    fails, the same URL with ":" appended is tried as well.
+    """
     kml_file_path = os.path.join(output_path, output_filename + ".kml")
-    try:
-        req = ul.Request(file_url, headers=HTTP_HEADERS)
-        with ul.urlopen(req, timeout=60) as resp, open(kml_file_path, "wb") as fh:
-            fh.write(resp.read())
-        print(f"  Downloaded: {file_url}")
-    except Exception as exc:
-        print(f"  ERROR downloading {file_url}: {exc}")
+    urls_to_try = [file_url, file_url + ":"]
+
+    content = None
+    for url in urls_to_try:
+        try:
+            req = ul.Request(url, headers=HTTP_HEADERS)
+            with ul.urlopen(req, timeout=60) as resp:
+                content = resp.read()
+            print(f"  Downloaded: {url}")
+            break
+        except Exception as exc:
+            print(f"  ERROR downloading {url}: {exc}")
+
+    if content is None:
         return False
 
+    with open(kml_file_path, "wb") as fh:
+        fh.write(content)
+    return True
+
+
+def extract_aoi(output_filename, output_path):
+    """Extract AOI entries from <output_filename>.kml to <output_filename>_AOI.csv."""
+    kml_file_path = os.path.join(output_path, output_filename + ".kml")
     platform_tag = output_filename[:3].upper()
     entries = extract_S2_entries(
         platform_tag, kml_file_path, output_filename + "_AOI.csv",
@@ -224,7 +258,11 @@ def download_and_extract_kml(file_url, output_filename, output_path):
 # ---------------------------------------------------------------------------
 
 def merge_aoi_files(directory, output_file):
-    """Merge *_AOI.csv; filter dates >= today-2; add Publish Date (+3 days)."""
+    """Merge *_AOI.csv; filter dates >= today-2; add Publish Date.
+
+    The Publish Date column (acquisition + PUBLISH_DELAY_DAYS) is kept because
+    calendar.html and README.md in this repository read it.
+    """
     merged = []
     today = datetime.datetime.now().date()
 
@@ -243,7 +281,7 @@ def merge_aoi_files(directory, output_file):
         df = df[df["Acquisition Date"] >= today - timedelta(days=2)]
         if df.empty:
             continue
-        df["Publish Date"] = df["Acquisition Date"] + timedelta(days=3)
+        df["Publish Date"] = df["Acquisition Date"] + timedelta(days=PUBLISH_DELAY_DAYS)
         df = df[["Acquisition Date", "Publish Date", "OrbitRelative", "Platform"]]
         df.rename(columns={"OrbitRelative": "Orbit"}, inplace=True)
         merged.append(df)
@@ -288,17 +326,17 @@ def main():
         for slug in sorted(kml_dict.keys(), reverse=True):
             print(f"    {slug}")
 
-        key = get_latest_kml(kml_dict)
-        if not key:
-            results[sat] = False
-            continue
-
-        results[sat] = download_and_extract_kml(
-            kml_dict[key], output_name, STORAGE_PATH,
-        )
+        # Try the best KML first; if it cannot be downloaded, try the next one
+        results[sat] = False
+        candidates = get_kml_candidates(kml_dict)
+        for slug in candidates:
+            print(f"  -> Trying KML: {slug}")
+            if download_kml(kml_dict[slug], output_name, STORAGE_PATH):
+                results[sat] = extract_aoi(output_name, STORAGE_PATH)
+                break
 
     print("\nMerging AOI CSV files ...")
-    merge_ok = merge_aoi_files(STORAGE_PATH, "acquisitionplan.csv")
+    merge_ok = merge_aoi_files(STORAGE_PATH, OUTPUT_CSV)
 
     print("\n**********************")
     for sat, ok in results.items():
@@ -307,9 +345,18 @@ def main():
 
     if all(results.values()) and merge_ok:
         print("\nAll Sentinel-2 operations completed successfully.")
+        print("removing intermediate AOI files ...")
+        for filename in os.listdir(STORAGE_PATH):
+            if filename.endswith("_AOI.csv") or filename.endswith("_plan.kml"):
+                os.remove(os.path.join(STORAGE_PATH, filename))
     else:
         print("\nCompleted with warnings (see above).")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as exc:
+        print(f"\nERROR: {exc}")
+        print("Acquisition plan update failed — continuing without updated plan.")
+        sys.exit(0)

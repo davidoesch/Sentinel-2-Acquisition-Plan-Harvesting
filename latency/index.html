@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel-2 Catalog Latency</title>
+    <meta name="description" content="Publication latency of swissEO Sentinel-2 scenes in the swisstopo STAC catalog, aggregated per H3 hexagon.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+    <div>
+        <h1>Sentinel-2 catalog latency</h1>
+        <p class="sub">Time from acquisition to publication in the
+            <a id="collection-link" href="https://data.geo.admin.ch/browser/index.html#/collections/ch.swisstopo.swisseo_s2-sr_v200" target="_blank" rel="noopener">swisstopo STAC</a>,
+            median per H3 hexagon. <a href="https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html">Acquisition calendar</a></p>
+    </div>
+</header>
+
+<section class="controls" aria-label="Filters">
+    <div class="seg" role="group" aria-label="View">
+        <button type="button" id="mode-date" class="on" aria-pressed="true">Single date</button>
+        <button type="button" id="mode-period" aria-pressed="false">Period median</button>
+    </div>
+    <div class="ctl" id="ctl-date">
+        <button type="button" id="prev" aria-label="Previous acquisition date">&#8249;</button>
+        <select id="date" aria-label="Acquisition date"></select>
+        <button type="button" id="next" aria-label="Next acquisition date">&#8250;</button>
+    </div>
+    <div class="ctl" id="ctl-period" hidden>
+        <label>From <input type="date" id="start"></label>
+        <label>to <input type="date" id="end"></label>
+        <div class="seg small" role="group" aria-label="Quick range">
+            <button type="button" data-days="30">30 d</button>
+            <button type="button" data-days="90">90 d</button>
+            <button type="button" data-days="0">All</button>
+        </div>
+    </div>
+    <div class="legend" id="legend" aria-label="Legend: median latency in hours"></div>
+</section>
+
+<main class="layout">
+    <div id="map" role="region" aria-label="Map of latency per hexagon"></div>
+    <aside class="panel">
+        <div class="tiles" id="tiles"></div>
+
+        <section class="card">
+            <h2 id="cell-title">Hexagon history</h2>
+            <p class="muted" id="cell-hint">Click a hexagon to see its latency on every acquisition date.</p>
+            <div id="chart" class="chart"></div>
+        </section>
+
+        <section class="card">
+            <h2>Scenes <span class="muted" id="scene-scope"></span></h2>
+            <div class="table-wrap">
+                <table id="scenes">
+                    <thead><tr><th>Acquired (UTC)</th><th>Published</th><th class="num">Latency</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <details class="card method">
+            <summary>Method and caveats</summary>
+            <p>For each STAC item, latency = <code>properties.created</code> &minus; <code>properties.datetime</code>.
+                Footprints are split into H3 resolution <span class="m-sres">7</span> sample cells. Each sample cell keeps the scene that published it first on that
+                acquisition date. The map shows the median over the sample cells of each resolution <span class="m-ores">5</span> hexagon.
+                Hexagons are only stored on dates with an acquisition.</p>
+            <p>Items published more than <span class="m-max">240</span> h after acquisition are treated as reprocessing and excluded from the map
+                (they are still listed with a "reprocessed" tag). The value measures when a scene became visible in this catalog,
+                not ESA's own publication time. Metadata only: no imagery is downloaded and no cloud masking is applied.</p>
+            <p class="muted" id="generated"></p>
+        </details>
+    </aside>
+</main>
+
+<div id="tip" class="tip" role="status" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
