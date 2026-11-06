@@ -163,8 +163,9 @@
             //itemBaseURL: "swisseo_vhi_v100",
 
             // OPTION S2 SR
-            collectionBaseURL: "ch.swisstopo.swisseo_s2-sr_v100",
-            itemBaseURL: "swisseo_s2-sr_v100",
+            collectionBaseURL: "ch.swisstopo.swisseo_s2-sr_v200",
+            itemBaseURL: "swisseo_s2-sr_v200",
+            thumbnailName: "thumbnail.png", // v100 used thumbnail.jpg
             productNAME: "S2_SR_HARMONIZED_SWISS",
             stacApiBaseUrl: "https://data.geo.admin.ch/api/stac/v0.9/collections/",
             mapGeoAdminUrl: "https://map.geo.admin.ch/index.html",
@@ -212,9 +213,9 @@
                         const dateOnly = dateTime.split('T')[0];
                         let timeOnly = dateTime.split('T')[1].split('.')[0].replace(/:/g, '');
                         timeOnly = timeOnly.endsWith('Z') ? timeOnly.slice(0, -1) : timeOnly;
-                        const viewLink = `${CONFIG.mapGeoAdminUrl}?layers=WMS||${CONFIG.itemBaseURL}}_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${CONFIG.collectionBaseURL}`;
-                        const image = `${CONFIG.dataGeoAdminUrl}${CONFIG.collectionBaseURL}/${dateOnly}t${timeOnly}/thumbnail.jpg`;
-                        const formattedUrl = `${CONFIG.dataGeoAdminUrl}browser/index.html#/collections/${CONFIG.collectionBaseURL}/items/${dateOnly}t${timeOnly}?&asset=asset-thumbnail.jpg`;
+                        const viewLink = `${CONFIG.mapGeoAdminUrl}?layers=WMS||${CONFIG.itemBaseURL}_${dateOnly}t${timeOnly}||https://wms.geo.admin.ch/?item=${dateOnly}t${timeOnly}||${CONFIG.collectionBaseURL}`;
+                        const image = `${CONFIG.dataGeoAdminUrl}${CONFIG.collectionBaseURL}/${dateOnly}t${timeOnly}/${CONFIG.thumbnailName}`;
+                        const formattedUrl = `${CONFIG.dataGeoAdminUrl}browser/index.html#/collections/${CONFIG.collectionBaseURL}/items/${dateOnly}t${timeOnly}?&asset=asset-${CONFIG.thumbnailName}`;
                         return { date: dateOnly, link: formattedUrl, downloadLink: formattedUrl, viewLink, image };
                     });
             };
@@ -286,6 +287,8 @@
                         let arrayOfDomNodes = [];
                         if (arg.event.classNames.includes('data-available')) {
                             let imgEl = document.createElement('img');
+                            // Some items have no thumbnail (yet): hide instead of a broken image
+                            imgEl.onerror = () => { imgEl.style.display = 'none'; };
                             imgEl.src = arg.event.extendedProps.image;
                             imgEl.classList.add('thumbnail');
                             arrayOfDomNodes.push(imgEl);
