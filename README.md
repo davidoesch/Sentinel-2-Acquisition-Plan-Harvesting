@@ -78,6 +78,18 @@ By default, this script processes an example AOI polygon and saves the output in
 
 CSV files from different acquisition plans are automatically merged into one output CSV, filtered to remove dates older than today, and add a calculated publish date.
 
+## Availability calendar
+
+[`calendar.html`](https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html) shows per day, for the
+swissEO S2-SR **v200** collection:
+
+- available scenes (thumbnail, local acquisition time, catalog latency, links to map.geo.admin, the STAC Browser and the metadata) from the [STAC API](https://data.geo.admin.ch/api/stac/v1/collections/ch.swisstopo.swisseo_s2-sr_v200)
+- days without imagery (cloudy / no candidate scene / tile upload incomplete) from [`dates_with_no_imagery.csv`](https://data.geo.admin.ch/ch.swisstopo.swisseo_s2-sr_v200/dates_with_no_imagery.csv)
+- planned acquisitions with orbit coverage from `acquisitionplan.csv`, with the expected publication time (median latency of the last 30 days)
+
+Options: `?lang=en` (default German), `?embed=1` (no header, stats or side panel, for iframes), `#2026-11` / `#2026-11-04` to open a month or day.
+Everything is fetched by the browser, so the page works as a static GitHub Pages site and under Flask.
+
 ## Sentinel-2 catalog latency map
 
 `latency/` holds a Flask and Leaflet app that shows how long Sentinel-2 scenes take to appear in the
@@ -100,9 +112,12 @@ python latency/latency_loader.py --export latency/data/latency.json
 python latency/app.py                                             # http://127.0.0.1:5000
 ```
 
+The Flask app serves the whole site with the same URLs as GitHub Pages: `/calendar.html`, `/latency/`.
+
 The daily GitHub Action rebuilds `latency/data/latency.json`, so the same page also runs as a static site on GitHub Pages
 (`/latency/`). Under Flask the data file is built live from SQLite, and there is a JSON API:
-`/api/dates`, `/api/latency?date=`, `/api/summary?start=&end=`, `/api/timeseries?h3_cell=`, `/api/scenes?start=&end=`.
+`/api/calendar?start=&end=` (per-day status merging the local scene DB, the no-imagery CSV and the plan), `/api/dates`, `/api/latency?date=`,
+`/api/summary?start=&end=`, `/api/timeseries?h3_cell=`, `/api/scenes?start=&end=`.
 Options: `--region <geojson>` / `--no-region`, `--output-resolution`, `--sample-resolution`, `--stac-url`, `--collection`, `--mission`
 (the loader works with any STAC collection that has `created` timestamps, e.g. a Sentinel-1 one).
 

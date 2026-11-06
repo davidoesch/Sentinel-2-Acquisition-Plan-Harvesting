@@ -28,6 +28,7 @@
     };
     const esc =(s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+    const CH_BOUNDS = [[45.8, 5.95], [47.82, 10.5]];
     const state = { mode: "date", date: null, start: null, end: null, cell: null };
     let D, cellIds, dates, map, layer, tip;
 
@@ -78,7 +79,7 @@
 
     // ---------------------------------------------------------------- map
     function initMap() {
-        map = L.map("map", { zoomSnap: 0.25 }).fitBounds([[45.75, 5.9], [47.85, 10.55]]);
+        map = L.map("map", { zoomSnap: 0.25 }).fitBounds(CH_BOUNDS);
         L.tileLayer("https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg", {
             maxZoom: 18,
             attribution: '&copy; <a href="https://www.swisstopo.admin.ch/" target="_blank" rel="noopener">swisstopo</a> | Contains modified Copernicus Sentinel data',
@@ -321,6 +322,9 @@
             return;
         }
         initControls();
+        // layout may have shifted while stylesheets/data loaded: re-measure and re-fit
+        map.invalidateSize({ animate: false });
+        map.fitBounds(CH_BOUNDS, { animate: false });
         render();
         matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
     });

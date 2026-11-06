@@ -1,74 +1,4 @@
-:root {
-    color-scheme: light;
-    --surface-0: #f4f4f2;
-    --surface-1: #fcfcfb;
-    --border: #dddcd7;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #77766f;
-    --accent: #2a78d6;
-    --grid: #e6e5e0;
-    /* sequential blue ramp, light = fast */
-    --seq-1: #cde2fb;
-    --seq-2: #86b6ef;
-    --seq-3: #3987e5;
-    --seq-4: #1c5cab;
-    --seq-5: #0d366b;
-    --line: #2a78d6;
-    --warn-bg: #fdf0d5;
-    --warn-text: #7a5200;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        color-scheme: dark;
-        --surface-0: #111110;
-        --surface-1: #1a1a19;
-        --border: #383835;
-        --text-primary: #f0efec;
-        --text-secondary: #c3c2b7;
-        --text-muted: #9a998f;
-        --accent: #6da7ec;
-        --grid: #2c2c2a;
-        --line: #5598e7;
-        --warn-bg: #3a2e12;
-        --warn-text: #f2c66b;
-    }
-}
-
-:root[data-theme="dark"] {
-    color-scheme: dark;
-    --surface-0: #111110;
-    --surface-1: #1a1a19;
-    --border: #383835;
-    --text-primary: #f0efec;
-    --text-secondary: #c3c2b7;
-    --text-muted: #9a998f;
-    --accent: #6da7ec;
-    --grid: #2c2c2a;
-    --line: #5598e7;
-    --warn-bg: #3a2e12;
-    --warn-text: #f2c66b;
-}
-
-* { box-sizing: border-box; }
-
-html, body { margin: 0; }
-
-body {
-    background: var(--surface-0);
-    color: var(--text-primary);
-    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
-
-a { color: var(--accent); }
-
-h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
-h2 { font-size: 14px; margin: 0 0 8px; }
-
-.top { padding: 14px 16px 6px; }
-.sub { margin: 2px 0 0; color: var(--text-secondary); }
-.muted { color: var(--text-muted); font-weight: normal; }
+/* Latency map page. Tokens, base styles and top bar: ../assets/site.css */
 
 .controls {
     display: flex;
@@ -80,26 +10,6 @@ h2 { font-size: 14px; margin: 0 0 8px; }
 
 .ctl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .ctl[hidden] { display: none; }
-
-button, select, input {
-    font: inherit;
-    color: var(--text-primary);
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 9px;
-}
-
-button { cursor: pointer; }
-button:hover { border-color: var(--text-muted); }
-button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-
-.seg { display: inline-flex; }
-.seg button { border-radius: 0; margin-left: -1px; }
-.seg button:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
-.seg button:last-child { border-radius: 0 6px 6px 0; }
-.seg button.on { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
-.seg.small button { padding: 5px 8px; font-size: 13px; }
 
 .legend { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; color: var(--text-secondary); font-size: 12px; }
 .legend .title { margin-right: 6px; }
@@ -124,17 +34,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
 .panel { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; min-width: 0; }
 
-.card {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
-}
-
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 10px; min-width: 0; }
-.tile .v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.tile .l { color: var(--text-secondary); font-size: 12px; }
 
 .chart { width: 100%; }
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
@@ -150,26 +50,10 @@ table { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-
 th, td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
 th { color: var(--text-secondary); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); }
 .num { text-align: right; }
-.tag { font-size: 11px; padding: 1px 5px; border-radius: 4px; background: var(--warn-bg); color: var(--warn-text); margin-left: 4px; }
 
 .method p { color: var(--text-secondary); margin: 8px 0 0; }
 .method summary { cursor: pointer; font-weight: 600; }
 code { font-size: 12px; }
-
-.tip {
-    position: fixed;
-    z-index: 1000;
-    pointer-events: none;
-    background: var(--surface-1);
-    color: var(--text-primary);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    max-width: 260px;
-}
-.tip b { font-variant-numeric: tabular-nums; }
 
 .leaflet-container { font: inherit; }
 

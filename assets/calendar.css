@@ -1,0 +1,234 @@
+/* swissEO acquisition calendar. Tokens and base styles: site.css */
+
+.cal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    padding: 10px 16px 6px;
+}
+
+.month-nav { display: flex; align-items: center; gap: 6px; }
+.month-nav h2 {
+    font-size: 22px;
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    margin: 0 6px;
+    min-width: 9.5em;
+    text-align: center;
+}
+.month-nav button { min-width: 34px; }
+.month-nav #prev, .month-nav #next { font-size: 18px; line-height: 1; padding: 4px 10px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-secondary); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend .k { width: 16px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend .k.scene { background: linear-gradient(135deg, #3f6f4e, #9fb3c8); }
+.legend .k.kplan { border: 1.5px dashed var(--accent); }
+.legend .k.cloud, .legend .k.none, .legend .k.warn { width: auto; height: auto; color: var(--text-muted); display: inline-flex; }
+.legend .k.warn { color: var(--warn-text); }
+.legend svg { width: 15px; height: 15px; }
+.legend i.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 6px 16px 12px;
+}
+.stats .tile .v small { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+.cal-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 12px;
+    padding: 0 16px 16px;
+    align-items: start;
+}
+
+.cal {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.cal-head, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.cal-head div {
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    border-bottom: 1px solid var(--border);
+}
+
+.day {
+    position: relative;
+    min-height: 124px;
+    padding: 6px;
+    border-right: 1px solid var(--grid);
+    border-bottom: 1px solid var(--grid);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    background: var(--surface-1);
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    border-radius: 0;
+    border-top: 0;
+    border-left: 0;
+    transition: background-color .12s;
+}
+.day:nth-child(7n) { border-right: 0; }
+button.day { cursor: pointer; }
+button.day:hover { background: var(--surface-2); border-color: var(--grid); }
+.day.out { background: var(--surface-0); }
+.day.out > * { opacity: .45; }
+.day.sel { box-shadow: inset 0 0 0 2px var(--text-primary); z-index: 1; }
+
+.dnum {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 20px;
+}
+.dnum .n { min-width: 20px; height: 20px; display: inline-grid; place-items: center; border-radius: 10px; }
+.day.today .dnum .n { background: var(--accent); color: #fff; padding: 0 6px; }
+.dnum .long { display: none; }
+
+/* scenes: thumbnails */
+.thumbs { display: flex; gap: 3px; flex: 1; min-height: 64px; }
+.th {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    border-radius: 6px;
+    background: var(--thumb-bg);
+    box-shadow: inset 0 0 0 1px var(--border);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+.th img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; padding: 3px; }
+.th .noimg, .detail .noimg { color: #77766f; font-size: 11px; }
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 4px; font-size: 11.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.meta > span { overflow: hidden; text-overflow: ellipsis; }
+.lat { display: inline-flex; align-items: center; gap: 4px; }
+.lat i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; box-shadow: 0 0 0 1px rgba(0,0,0,.12); }
+
+/* planned acquisitions */
+.plan {
+    flex: 1;
+    border: 1.5px dashed var(--accent);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px;
+    min-height: 64px;
+    position: relative;
+    overflow: hidden;
+}
+.plan + .plan { margin-top: 2px; }
+.plan img { width: 100%; max-height: 54px; object-fit: contain; opacity: .9; }
+.plan .pl { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: .02em; }
+.plan.past { border-color: var(--text-muted); }
+.plan.past .pl { color: var(--text-muted); }
+
+/* days without imagery */
+.empty-reason { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: var(--text-muted); font-size: 11.5px; text-align: center; }
+.empty-reason svg { width: 26px; height: 26px; }
+.empty-reason.warn { color: var(--warn-text); }
+
+.cal-status { margin: 0; padding: 8px 12px; color: var(--text-muted); font-size: 12px; }
+.cal-status:empty { display: none; }
+
+/* loading shimmer */
+.cal.loading .day:not(.out) .dnum::after {
+    content: "";
+    width: 40%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface-2);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .4; } }
+
+/* detail panel */
+.detail { position: sticky; top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.detail h3 { margin: 0; font-size: 16px; }
+.detail .big {
+    background: var(--thumb-bg);
+    box-shadow: inset 0 0 0 1px var(--border);
+    border-radius: 8px;
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+.detail .big img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.detail .big.plan-img { background: var(--surface-2); }
+.detail dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 13px; }
+.detail dt { color: var(--text-secondary); }
+.detail dd { margin: 0; font-variant-numeric: tabular-nums; }
+.detail .links { display: flex; flex-wrap: wrap; gap: 6px; }
+.detail .links a {
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+}
+.detail .links a:hover { border-color: var(--text-muted); }
+.detail .links a.primary { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+.detail .links svg { width: 14px; height: 14px; }
+.detail .scene + .scene { border-top: 1px solid var(--grid); padding-top: 10px; }
+.detail .scene { display: flex; flex-direction: column; gap: 8px; }
+.detail .hint { color: var(--text-muted); margin: 0; }
+.detail .reason { display: flex; gap: 10px; align-items: center; color: var(--text-secondary); }
+.detail .reason svg { width: 32px; height: 32px; flex: none; color: var(--text-muted); }
+
+/* embedded (iframe) mode: ?embed=1 */
+body.embed .top, body.embed .stats, body.embed .detail { display: none; }
+body.embed .cal-layout { grid-template-columns: 1fr; padding: 0 8px 8px; }
+body.embed .cal-bar { padding: 8px; }
+
+/* tablet */
+@media (max-width: 1100px) {
+    .cal-layout { grid-template-columns: 1fr; }
+    .detail { position: static; }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* phone: agenda list */
+@media (max-width: 680px) {
+    .month-nav h2 { font-size: 18px; min-width: 0; flex: 1; }
+    .month-nav { width: 100%; }
+    .cal-head { display: none; }
+    .cal-grid { display: flex; flex-direction: column; }
+    .day { min-height: 0; border-right: 0; flex-direction: row; align-items: stretch; gap: 10px; }
+    .day.out, .day.blank { display: none; }
+    .dnum { flex-direction: column; align-items: flex-start; width: 64px; flex: none; }
+    .dnum .long { display: block; font-weight: 500; color: var(--text-muted); }
+    .day .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .thumbs, .plan { min-height: 72px; }
+}
+@media (min-width: 681px) {
+    .day .body { display: contents; }
+}

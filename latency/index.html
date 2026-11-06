@@ -6,6 +6,7 @@
     <title>Sentinel-2 Catalog Latency</title>
     <meta name="description" content="Publication latency of swissEO Sentinel-2 scenes in the swisstopo STAC catalog, aggregated per H3 hexagon.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="stylesheet" href="../assets/site.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,8 +15,12 @@
         <h1>Sentinel-2 catalog latency</h1>
         <p class="sub">Time from acquisition to publication in the
             <a id="collection-link" href="https://data.geo.admin.ch/browser/index.html#/collections/ch.swisstopo.swisseo_s2-sr_v200" target="_blank" rel="noopener">swisstopo STAC</a>,
-            median per H3 hexagon. <a href="https://davidoesch.github.io/Sentinel-2-Acquisition-Plan-Harvesting/calendar.html">Acquisition calendar</a></p>
+            median per H3 hexagon.</p>
     </div>
+    <nav class="nav" aria-label="Pages">
+        <a href="../calendar.html">Calendar</a>
+        <a href="./" aria-current="page">Latency map</a>
+    </nav>
 </header>
 
 <section class="controls" aria-label="Filters">
