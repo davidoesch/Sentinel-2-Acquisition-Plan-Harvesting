@@ -9,7 +9,6 @@ It also tracks how fast acquired scenes actually show up in the swisstopo STAC c
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2026-11-06         | 2026-11-09     |      65 | S2C        | ![Coverage](assets/65.png)  |
 | 2026-11-07         | 2026-11-10     |       8 | S2B        | ![Coverage](assets/8.png)   |
 | 2026-11-08         | 2026-11-11     |      65 | S2A        | ![Coverage](assets/65.png)  |
 | 2026-11-08         | 2026-11-11     |      22 | S2B        | ![Coverage](assets/22.png)  |
