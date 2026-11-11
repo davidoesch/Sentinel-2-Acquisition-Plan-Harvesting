@@ -9,15 +9,18 @@ It also tracks how fast acquired scenes actually show up in the swisstopo STAC c
 ## Acquisition Plan Sentinel-2 Switzerland
 | Acquisition Date   | Publish Date   |   Orbit | Platform   | Coverage                    |
 |:-------------------|:---------------|--------:|:-----------|:----------------------------|
-| 2026-11-08         | 2026-11-11     |      65 | S2A        | ![Coverage](assets/65.png)  |
-| 2026-11-08         | 2026-11-11     |      22 | S2B        | ![Coverage](assets/22.png)  |
 | 2026-11-09         | 2026-11-12     |     108 | S2C        | ![Coverage](assets/108.png) |
 | 2026-11-11         | 2026-11-14     |     108 | S2A        | ![Coverage](assets/108.png) |
+| 2026-11-11         | 2026-11-14     |      65 | S2B        | ![Coverage](assets/65.png)  |
 | 2026-11-12         | 2026-11-15     |       8 | S2C        | ![Coverage](assets/8.png)   |
 | 2026-11-13         | 2026-11-16     |      22 | S2C        | ![Coverage](assets/22.png)  |
 | 2026-11-14         | 2026-11-17     |       8 | S2A        | ![Coverage](assets/8.png)   |
+| 2026-11-14         | 2026-11-17     |     108 | S2B        | ![Coverage](assets/108.png) |
 | 2026-11-15         | 2026-11-18     |      22 | S2A        | ![Coverage](assets/22.png)  |
 | 2026-11-16         | 2026-11-19     |      65 | S2C        | ![Coverage](assets/65.png)  |
+| 2026-11-17         | 2026-11-20     |       8 | S2B        | ![Coverage](assets/8.png)   |
+| 2026-11-18         | 2026-11-21     |      22 | S2B        | ![Coverage](assets/22.png)  |
+| 2026-11-21         | 2026-11-24     |      65 | S2B        | ![Coverage](assets/65.png)  |
 
 ## Features
 
